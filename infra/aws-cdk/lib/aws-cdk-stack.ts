@@ -57,5 +57,9 @@ export class AwsCdkStack extends cdk.Stack {
       value: `https://${distribution.distributionDomainName}`,
       description: 'The URL of the CloudFront distribution serving the frontend application',
     });
+
+    new cdk.CfnOutput(this, 'BucketUrl', {
+      value: `https://${bucket.bucketRegionalDomainName}`,
+    });
   }
 }
