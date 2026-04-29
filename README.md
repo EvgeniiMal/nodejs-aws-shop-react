@@ -36,3 +36,22 @@ Runs tests in console, in browser or with coverage.
 ### `lint`, `prettier`
 
 Runs linting and formatting for all files in `src` folder.
+
+### `cdk:bootstrap`
+
+Bootstrap QWS infrastructure with CDK
+
+### `cdk:deploy` 
+
+Deploy application to S3
+
+### `cdk:destroy` 
+
+Destroy current application and resources on AWS with CDK
+
+
+## Links
+
+### [Cloudfront deploy](https://d2x17qocqp8yna.cloudfront.net/)
+
+### [Direct bucket link](https://awscdkstack-rsprojectb75c9acb-njhs1aldt0ep.s3.eu-west-1.amazonaws.com/)
