@@ -20,14 +20,21 @@ export default function PageLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
       setError("Please enter username and password.");
       return;
     }
-    login(username.trim(), password.trim());
-    navigate(from, { replace: true });
+
+    setError("");
+
+    try {
+      await login(username.trim(), password.trim());
+      navigate(from, { replace: true });
+    } catch {
+      setError("Invalid username or password.");
+    }
   };
 
   return (

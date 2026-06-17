@@ -11,8 +11,8 @@ type AddProductToCartProps = {
 };
 
 export default function AddProductToCart({ product }: AddProductToCartProps) {
-  const { data = [], isFetching } = useCart();
-  const { mutate: upsertCart } = useUpsertCart();
+  const { data = [], isLoading: isCartLoading } = useCart();
+  const { mutate: upsertCart, isLoading: isUpserting } = useUpsertCart();
   const invalidateCart = useInvalidateCart();
   const cartItem = data.find((i) => i.product.id === product.id);
 
@@ -32,18 +32,20 @@ export default function AddProductToCart({ product }: AddProductToCartProps) {
     }
   };
 
+  const isDisabled = isCartLoading || isUpserting;
+
   return cartItem ? (
     <>
-      <IconButton disabled={isFetching} onClick={removeProduct} size="large">
+      <IconButton disabled={isDisabled} onClick={removeProduct} size="large">
         <Remove color={"secondary"} />
       </IconButton>
       <Typography align="center">{cartItem.count}</Typography>
-      <IconButton disabled={isFetching} onClick={addProduct} size="large">
+      <IconButton disabled={isDisabled} onClick={addProduct} size="large">
         <Add color={"secondary"} />
       </IconButton>
     </>
   ) : (
-    <IconButton disabled={isFetching} onClick={addProduct} size="large">
+    <IconButton disabled={isDisabled} onClick={addProduct} size="large">
       <CartIcon color={"secondary"} />
     </IconButton>
   );

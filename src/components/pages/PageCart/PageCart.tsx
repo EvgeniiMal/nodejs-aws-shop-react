@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import { useCart, useInvalidateCart } from "~/queries/cart";
 import AddressForm from "~/components/pages/PageCart/components/AddressForm";
 import { useSubmitOrder } from "~/queries/orders";
+import { useAvailableProducts } from "~/queries/products";
 
 enum CartStep {
   ReviewCart,
@@ -43,7 +44,12 @@ const Success = () => (
 const steps = ["Review your cart", "Shipping address", "Review your order"];
 
 export default function PageCart() {
-  const { data = [] } = useCart();
+  const { data: cartData = [] } = useCart();
+  const { data: availableProducts = [] } = useAvailableProducts();
+  const data = cartData.map((item) => {
+    const product = availableProducts.find((p) => p.id === item.product.id);
+    return product ? { ...item, product: { ...item.product, price: product.price } } : item;
+  });
   const { mutate: submitOrder } = useSubmitOrder();
   const invalidateCart = useInvalidateCart();
   const [activeStep, setActiveStep] = React.useState<CartStep>(

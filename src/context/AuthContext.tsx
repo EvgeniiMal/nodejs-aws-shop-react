@@ -1,35 +1,57 @@
+import axios, { AxiosRequestHeaders } from "axios";
 import React, { createContext, useContext, useState } from "react";
+import API_PATHS from "~/constants/apiPaths";
 
-const AUTH_TOKEN_KEY = "authorization_token";
+type LoginResponse =
+  | {
+      access_token: string;
+    };
 
 interface AuthContextValue {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => void;
+  authToken?: string;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+export function buildAuthHeaders(authToken?: string): AxiosRequestHeaders {
+  return authToken ? { Authorization: `Basic ${authToken}` } : {};
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    () => !!localStorage.getItem(AUTH_TOKEN_KEY)
-  );
+  const [authToken, setAuthToken] = useState<string>();
+  const isAuthenticated = Boolean(authToken);
 
-  const login = (username: string, password: string) => {
-    const token = btoa(`${username}:${password}`);
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
-    setIsAuthenticated(true);
+  const login = async (username: string, password: string) => {
+    const response = await axios.post<LoginResponse>(API_PATHS.login, {
+      username,
+      password,
+    });
+
+    const tokenFromBody =response.data?.access_token;
+    const authorizationHeader = response.headers?.authorization;
+    const tokenFromHeader = authorizationHeader?.startsWith("Basic ")
+      ? authorizationHeader.slice("Basic ".length)
+      : authorizationHeader;
+    const token = tokenFromBody || tokenFromHeader;
+
+    if (!token) {
+      throw new Error("Login API did not return token");
+    }
+
+    setAuthToken(token);
   };
 
   const logout = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    setIsAuthenticated(false);
+    setAuthToken(undefined);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, authToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -12,11 +12,20 @@ import {
   useInvalidateOrders,
   useOrders,
 } from "~/queries/orders";
+import { Order } from "~/models/Order";
+import { useEffect } from "react";
 
 export default function Orders() {
   const { data } = useOrders();
   const invalidateOrders = useInvalidateOrders();
   const { mutate: deleteOrder } = useDeleteOrder();
+
+  const totalItemsCount = (items: Order["items"]) =>
+    items.reduce((acc, item) => acc + item.count, 0);
+
+useEffect(() => {
+  invalidateOrders();
+}, [invalidateOrders]);
 
   return (
     <TableContainer component={Paper}>
@@ -34,12 +43,12 @@ export default function Orders() {
           {data?.map((order) => (
             <TableRow key={order.id}>
               <TableCell component="th" scope="row">
-                {order.address?.firstName} {order.address?.lastName}
+                {order.delivery.firstName} {order.delivery.lastName}
               </TableCell>
-              <TableCell align="right">{order.items.length}</TableCell>
-              <TableCell align="right">{order.address?.address}</TableCell>
+              <TableCell align="right">{totalItemsCount(order.items)}</TableCell>
+              <TableCell align="right">{order.delivery.address}</TableCell>
               <TableCell align="right">
-                {order.statusHistory[order.statusHistory.length - 1].status}
+                {order.status}
               </TableCell>
               <TableCell align="right">
                 <Button

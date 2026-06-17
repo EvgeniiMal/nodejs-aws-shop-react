@@ -3,6 +3,7 @@ import API_PATHS from "~/constants/apiPaths";
 import { AvailableProduct } from "~/models/Product";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import React from "react";
+import { buildAuthHeaders, useAuth } from "~/context/AuthContext";
 
 export function useAvailableProducts() {
   return useQuery<AvailableProduct[], AxiosError>(
@@ -47,21 +48,19 @@ export function useRemoveProductCache() {
 }
 
 export function useUpsertAvailableProduct() {
+  const { authToken } = useAuth();
   return useMutation((values: AvailableProduct) =>
     axios.put<AvailableProduct>(`${API_PATHS.bff}/product`, values, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
+      headers: buildAuthHeaders(authToken),
     })
   );
 }
 
 export function useDeleteAvailableProduct() {
+  const { authToken } = useAuth();
   return useMutation((id: string) =>
     axios.delete(`${API_PATHS.bff}/product/${id}`, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
+      headers: buildAuthHeaders(authToken),
     })
   );
 }
