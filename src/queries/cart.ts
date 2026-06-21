@@ -8,7 +8,7 @@ import { buildAuthHeaders, useAuth } from "~/context/AuthContext";
 export function useCart() {
   const { authToken } = useAuth();
   return useQuery<CartItem[], AxiosError>("cart", async () => {
-    const res = await axios.get<CartItem[]>(`${API_PATHS.cart}/profile/cart`, {
+    const res = await axios.get<CartItem[]>(`${API_PATHS.cart}`, {
       headers: buildAuthHeaders(authToken),
     });
     return res.data;
@@ -31,7 +31,7 @@ export function useInvalidateCart() {
 export function useUpsertCart() {
   const { authToken } = useAuth();
   return useMutation((values: CartItem) =>
-    axios.put<CartItem[]>(`${API_PATHS.cart}/profile/cart`, values, {
+    axios.put<CartItem[]>(`${API_PATHS.cart}`, values, {
       headers: buildAuthHeaders(authToken),
     })
   );
