@@ -5,6 +5,7 @@ export const ProductSchema = Yup.object({
   title: Yup.string().required().default(""),
   description: Yup.string().default(""),
   price: Yup.number().positive().required().defined().default(0),
+  imageUrl: Yup.string().url().default("https://placehold.co/600x400/png?text=Product"),
 });
 
 export const AvailableProductSchema = ProductSchema.shape({

@@ -30,7 +30,7 @@ type OrderResponse = {
 export function useOrders() {
   const { authToken } = useAuth();
   return useQuery<OrderResponse[], AxiosError>("orders", async () => {
-    const res = await axios.get<OrderResponse[]>(`${API_PATHS.order}/order`, {
+    const res = await axios.get<OrderResponse[]>(`${API_PATHS.order}`, {
       headers: buildAuthHeaders(authToken),
     });
     return res.data;
@@ -50,7 +50,7 @@ export function useUpdateOrderStatus() {
   return useMutation(
     (values: { id: string; status: OrderStatus; comment: string }) => {
       const { id, ...data } = values;
-      return axios.put(`${API_PATHS.order}/order/${id}/status`, data, {
+      return axios.put(`${API_PATHS.order}/${id}/status`, data, {
         headers: buildAuthHeaders(authToken),
       });
     }
@@ -60,7 +60,7 @@ export function useUpdateOrderStatus() {
 export function useSubmitOrder() {
   const { authToken } = useAuth();
   return useMutation((values: Omit<Order, "id">) => {
-    return axios.put<Omit<Order, "id">>(`${API_PATHS.order}/order`, values, {
+    return axios.put<Omit<Order, "id">>(`${API_PATHS.order}`, values, {
       headers: buildAuthHeaders(authToken),
     });
   });
@@ -78,7 +78,7 @@ export function useInvalidateOrder() {
 export function useDeleteOrder() {
   const { authToken } = useAuth();
   return useMutation((id: string) =>
-    axios.delete(`${API_PATHS.order}/order/${id}`, {
+    axios.delete(`${API_PATHS.order}/${id}`, {
       headers: buildAuthHeaders(authToken),
     })
   );
